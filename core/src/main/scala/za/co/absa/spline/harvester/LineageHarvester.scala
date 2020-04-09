@@ -83,27 +83,27 @@ class LineageHarvester(logicalPlan: LogicalPlan, executedPlanOpt: Option[SparkPl
         }
 
       val plan = ExecutionPlan(
-        id = UUID.randomUUID,
-        operations = Operations(writeOp, opReads.asOption, opOthers.asOption),
+        UUID.randomUUID,
+        operations = Operations(writeOp, opReads, opOthers),
         systemInfo = SystemInfo(AppMetaInfo.Spark, spark.SPARK_VERSION),
         agentInfo = Some(AgentInfo(AppMetaInfo.Spline, BuildInfo.Version)),
         extraInfo = Map(
           ExecutionPlanExtra.AppName -> session.sparkContext.appName,
           ExecutionPlanExtra.DataTypes -> componentCreatorFactory.dataTypeConverter.values,
           ExecutionPlanExtra.Attributes -> componentCreatorFactory.attributeConverter.values
-        ).asOption
+        )
       )
 
       if (writeCommand.mode == SaveMode.Ignore) None
       else Some(plan -> ExecutionEvent(
-        planId = plan.id,
-        timestamp = System.currentTimeMillis(),
+        plan.id,
+        System.currentTimeMillis(),
         error = None,
-        extra = Map(
+        Map(
           ExecutionEventExtra.AppId -> session.sparkContext.applicationId,
           ExecutionEventExtra.ReadMetrics -> readMetrics,
           ExecutionEventExtra.WriteMetrics -> writeMetrics
-        ).asOption))
+        )))
     })
   }
 

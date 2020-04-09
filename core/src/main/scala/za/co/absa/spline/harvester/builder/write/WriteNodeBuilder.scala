@@ -34,16 +34,16 @@ class WriteNodeBuilder(command: WriteCommand)
   override def build(): WriteOperation = {
     val Seq(uri) = command.sourceIdentifier.uris
     WriteOperation(
-      outputSource = uri,
-      append = command.mode == SaveMode.Append,
-      id = id,
-      childIds = childIds.toList,
-      schema = None,
-      params = Map(command.params.toSeq: _*).asOption,
-      extra = Map(
+      uri,
+      command.mode == SaveMode.Append,
+      id,
+      childIds.toList,
+//      schema = None,
+      Map(command.params.toSeq: _*),
+      Map(
         OperationExtras.Name -> command.name,
         OperationExtras.DestinationType -> command.sourceIdentifier.format
-      ).asOption
+      )
     )
   }
 }

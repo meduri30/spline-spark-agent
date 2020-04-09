@@ -22,12 +22,8 @@ import org.apache.spark.internal.Logging
 import scalaj.http.{BaseHttp, Http}
 import za.co.absa.commons.config.ConfigurationImplicits._
 import za.co.absa.spline.harvester.dispatcher.HttpLineageDispatcher.RESTResource
-import za.co.absa.spline.harvester.exception.SplineNotInitializedException
 import za.co.absa.spline.harvester.json.HarvesterJsonSerDe.impl._
 import za.co.absa.spline.producer.model.{ExecutionEvent, ExecutionPlan}
-
-import scala.util.control.NonFatal
-import scala.util.{Failure, Success, Try}
 
 object PrintLineageDispatcher {
   val producerUrlProperty = "spline.producer.url"
@@ -44,7 +40,7 @@ class PrintLineageDispatcher(splineServerRESTEndpointBaseURL: String, http: Base
   extends LineageDispatcher
     with Logging {
 
-  def this(configuration: Configuration) = this(configuration.getRequiredString(PrintLineageDispatcher.producerUrlProperty), Http)
+  def this(configuration: Configuration) = this("", Http)
 
   log.info(s"spline.producer.url is set to:'${splineServerRESTEndpointBaseURL}'")
 
@@ -67,17 +63,5 @@ class PrintLineageDispatcher(splineServerRESTEndpointBaseURL: String, http: Base
     val randomUUID: String = UUID.randomUUID().toJson
     log.info(s"Generated UUID: $randomUUID")
     randomUUID
-  }
-
-  override def ensureProducerReady(): Unit = {
-    val tryStatusOk = Try(true)
-
-    tryStatusOk match {
-      case Success(false) => throw new SplineNotInitializedException(
-        "Connection to Spline Gateway: OK, but the Gateway is not initialized properly! Check Gateway's logs.")
-      case Failure(e) if NonFatal(e) => throw new SplineNotInitializedException(
-        "Spark Agent was not able to establish connection to Spline Gateway.", e)
-      case _ => Unit
-    }
   }
 }

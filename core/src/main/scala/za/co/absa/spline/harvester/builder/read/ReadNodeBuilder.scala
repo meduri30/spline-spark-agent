@@ -32,13 +32,13 @@ class ReadNodeBuilder
   override val operation: LogicalPlan = command.operation
 
   override def build(): ReadOperation = ReadOperation(
-    childIds = Nil,
-    inputSources = command.sourceIdentifier.uris.toList,
-    id = id,
-    schema = Some(outputSchema),
-    params = Map(command.params.toSeq: _*).asOption,
-    extra = Map(
+//    childIds = Nil,
+    command.sourceIdentifier.uris.toList,
+    id,
+    Some(outputSchema),
+    Map(command.params.toSeq: _*),
+    Map(
       OperationExtras.Name -> operation.nodeName,
       OperationExtras.SourceType -> command.sourceIdentifier.format
-    ).asOption)
+    ))
 }

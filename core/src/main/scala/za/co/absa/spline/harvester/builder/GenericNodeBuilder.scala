@@ -29,10 +29,10 @@ class GenericNodeBuilder
   override protected type R = DataOperation
 
   override def build(): DataOperation = DataOperation(
-    id = id,
-    childIds = childIds.toList.asOption,
-    schema = if (!isTerminal && childOutputSchemas.forall(outputSchema.==)) None else Some(outputSchema),
-    params = componentCreatorFactory.operationParamsConverter.convert(operation).asOption,
-    extra = Map(OperationExtras.Name -> operation.nodeName).asOption
+    id,
+    childIds.toList,
+    if (!isTerminal && childOutputSchemas.forall(outputSchema.==)) None else Some(outputSchema),
+    componentCreatorFactory.operationParamsConverter.convert(operation),
+    Map(OperationExtras.Name -> operation.nodeName)
   )
 }
