@@ -24,6 +24,8 @@ import za.co.absa.spline.harvester.dispatcher.HttpLineageDispatcher.RESTResource
 import za.co.absa.spline.harvester.json.HarvesterJsonSerDe.impl._
 import za.co.absa.spline.producer.model.{ExecutionEvent, ExecutionPlan}
 
+import scala.util.Random
+
 object PrintLineageDispatcher {
   val producerUrlProperty = "spline.producer.url"
 
@@ -49,6 +51,8 @@ class PrintLineageDispatcher(splineServerRESTEndpointBaseURL: String, http: Base
 
 
   override def send(executionPlan: ExecutionPlan): String = {
+    // save the json to some file
+    saveToFile(executionPlan.toJson)
     printOutgoingJson(executionPlan.toJson, executionPlansUrl)
   }
 
@@ -62,5 +66,15 @@ class PrintLineageDispatcher(splineServerRESTEndpointBaseURL: String, http: Base
     val randomUUID: String = UUID.randomUUID().toJson
     log.info(s"Generated UUID: $randomUUID")
     randomUUID
+  }
+
+  private def saveToFile(json: String): Unit = {
+    val baseFolderPath: String = "/Users/aparna/myStuff/spline_output"
+    val prefex: Int = Random.nextInt()
+    import java.io._
+    val file = new File(s"$baseFolderPath/$prefex.json")
+    val bw = new BufferedWriter(new FileWriter(file))
+    bw.write(json)
+    bw.close()
   }
 }

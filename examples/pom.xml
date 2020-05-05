@@ -52,6 +52,11 @@
             <artifactId>agent-core_${scala.binary.version}</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.circe/circe-parser -->
+<!--        <dependency>-->
+<!--            <groupId>io.circe</groupId>-->
+<!--            <artifactId>circe-parser_2.11</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
     <profiles>
         <profile>

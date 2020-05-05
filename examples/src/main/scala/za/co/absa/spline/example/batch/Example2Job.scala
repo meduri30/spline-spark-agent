@@ -20,14 +20,14 @@ import org.apache.spark.sql.SaveMode
 import za.co.absa.spline.example.SparkApp
 import za.co.absa.spline.harvester.SparkLineageInitializer._
 
-object Example2Job extends SparkApp("Example 2") {
+object Example2Job extends SparkApp("cdm_db") {
 
   spark.enableLineageTracking()
 
   val ds = spark.read
     .option("header", "true")
     .option("inferSchema", "true")
-    .csv("data/input/batch/wikidata.csv")
+    .csv("examples/data/input/batch/wikidata.csv")
 
   // Stage 1
   val startingDS = ds.filter($"total_response_size" > 10000).cache()
@@ -41,5 +41,5 @@ object Example2Job extends SparkApp("Example 2") {
   stage2DS
     .filter($"domain_code".eqNullSafe("aa"))
     .select($"page_title".as("name"), $"count_views".as("count"))
-    .write.mode(SaveMode.Overwrite).parquet("data/output/batch/job2_stage2_results")
+    .write.mode(SaveMode.Overwrite).parquet("examples/data/output/batch/job2_stage2_results")
 }
